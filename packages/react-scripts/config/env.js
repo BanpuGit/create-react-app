@@ -73,7 +73,13 @@ function getClientEnvironment(publicUrl) {
     .filter(key => REACT_APP.test(key))
     .reduce(
       (env, key) => {
-        env[key] = process.env[key];
+        // Custom Override
+        env[key] =
+          process.env.NODE_ENV === 'production' &&
+          process.env.DEPLOYMENT_STAGE !== 'Development'
+            ? `window._env_.${key}` // if production we want to use window._env_ instead of bundled variables
+            : process.env[key];
+
         return env;
       },
       {
@@ -87,10 +93,17 @@ function getClientEnvironment(publicUrl) {
         PUBLIC_URL: publicUrl,
       }
     );
+
+  // Custom stringification
   // Stringify all values so we can feed into Webpack DefinePlugin
   const stringified = {
     'process.env': Object.keys(raw).reduce((env, key) => {
-      env[key] = JSON.stringify(raw[key]);
+      env[key] =
+        NODE_ENV === 'production' &&
+        process.env.DEPLOYMENT_STAGE !== 'Development' &&
+        REACT_APP.test(key)
+          ? raw[key] // don't QUOTE values if production
+          : JSON.stringify(raw[key]);
       return env;
     }, {}),
   };

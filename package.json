@@ -1,7 +1,7 @@
 {
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/react-scripts"
   ],
   "scripts": {
     "build": "cd packages/react-scripts && node bin/react-scripts.js build",
@@ -51,5 +51,8 @@
     "yarn.lock": [
       "git rm --cached"
     ]
+  },
+  "dependencies": {
+    "cross-env": "^6.0.3"
   }
 }
